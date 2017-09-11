@@ -5,49 +5,12 @@
 # set-executionpolicy unrestricted 
 # c:\downloads\Windows_Fix.PS1
 
-#Show hidden files and extensions
-$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
-Set-ItemProperty $key Hidden 1
-Set-ItemProperty $key HideFileExt 0
-Set-ItemProperty $key ShowSuperHidden 1
-Set-ItemProperty $key DontPrettyPath 1
-New-ItemProperty $key Start_NotifyNewApps -value 0
+# Grab BlackViper's Service Settings 
+## Disables unnecessary services
+wget "https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper-Win10.ps1" -outfile "c:\downloads\BlackViper-Win10.ps1"
+wget "https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper.csv" -outfile "c:\downloads\BlackViper.csv"
+c:\downloads\BlackViper-Win10.ps1 -atos -auto -safe -min -bcsc -log -baf
 
-# Disable Java Sponsors and Updates
-Set-ItemProperty HKLM:\SOFTWARE\JavaSoft SPONSORS 'DISABLE'
-Set-ItemProperty HKLM:\SOFTWARE\Wow6432Node\JavaSoft SPONSORS 'DISABLE'
-Set-ItemProperty HKLM:\SOFTWARE\JavaSoft\Java Update\Policy EnableJavaUpdate 00000000
-$key = 'HKCU:\SOFTWARE\Wow6432Node\JavaSoft\Java Update\Policy'
-Set-ItemProperty $key EnableJavaUpdate 00000000
-Set-ItemProperty $key NotifyDownload 00000000
-Set-ItemProperty $key PostStatusUrl ''
-Set-ItemProperty $key UpdateMin ''
-Set-ItemProperty $key Frequency ''
-
-# Supress boot popups
-Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Windows NoPopupsOnBoot 1
-
-# Remove user folders from "My Computer"
-Remove-Item HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse
-
-# Remove user folders from "Explorer"
-Remove-Item HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse
-
-# Keep Taskbar icons from Grouping. 1 always combines
-Set-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced TaskbarGlomming 0
-
-# Disable Search the Internet for program to open filetype
-Set-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer InternetOpenWith 1
-
-# Enable HKCR in powershell
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
-
-# Remove OneDrive from explorer
-Set-ItemProperty HKCR:\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 00000000 
-Set-ItemProperty HKCR:\Wow6432Node\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 0000000
-
-# Restart Explorer
-Stop-Process -processname explorer
 
 # Remove unused windows Apps
 ## To remove all Apps
@@ -110,3 +73,58 @@ wget "https://download.spybot.info/AntiBeacon/Portable/SpybotAntiBeaconPortable-
 c:\downloads\spybot.exe
 ## Download and install Cura
 start https://ultimaker.com/en/products/cura-software/list
+
+
+#Show hidden files and extensions
+$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
+Set-ItemProperty $key Hidden 1
+Set-ItemProperty $key HideFileExt 0
+Set-ItemProperty $key ShowSuperHidden 1
+Set-ItemProperty $key DontPrettyPath 1
+New-ItemProperty $key Start_NotifyNewApps -value 0
+
+# Disable Java Sponsors and Updates
+Set-ItemProperty HKLM:\SOFTWARE\JavaSoft SPONSORS 'DISABLE'
+Set-ItemProperty HKLM:\SOFTWARE\Wow6432Node\JavaSoft SPONSORS 'DISABLE'
+Set-ItemProperty HKLM:\SOFTWARE\JavaSoft\Java Update\Policy EnableJavaUpdate 00000000
+$key = 'HKCU:\SOFTWARE\Wow6432Node\JavaSoft\Java Update\Policy'
+Set-ItemProperty $key EnableJavaUpdate 00000000
+Set-ItemProperty $key NotifyDownload 00000000
+Set-ItemProperty $key PostStatusUrl ''
+Set-ItemProperty $key UpdateMin ''
+Set-ItemProperty $key Frequency ''
+
+# Enable HKCR in powershell
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+
+# Supress boot popups
+Set-ItemProperty HKLM:\SYSTEM\CurrentControlSet\Control\Windows NoPopupsOnBoot 1
+
+# Remove user folders from "My Computer"
+Remove-Item HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse
+
+# Remove user folders from "Explorer"
+Remove-Item HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse
+
+# Keep Taskbar icons from Grouping. 1 always combines
+Set-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced TaskbarGlomming 0
+
+# Disable Search the Internet for program to open filetype
+Set-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer InternetOpenWith 1
+
+# Remove OneDrive from explorer
+Set-ItemProperty HKCR:\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 00000000 
+Set-ItemProperty HKCR:\Wow6432Node\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 0000000
+
+# Turn Cortana off and block access
+Set-ItemProperty HKCU:\Software\Microsoft\Windows\CurrentVersion\Search\ SearchboxTaskbarMode 0
+Set-ItemProperty 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search' AllowCortana 0 
+Get-NetFirewallRule | where {$_.DisplayGroup -like '*Microsoft*Windows*Cortana*'} | Enable-NetFirewallRule
+Get-NetFirewallRule -DisplayGroup 'Cortana' | Enable-NetFirewallRule
+
+#Setup taskbar, 
+Remove-Item $env:APPDATA'\Microsoft\Internet Explorer\Quick Launch\User Pinned\TaskBar\*'
+Remove-Item HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Taskband\* -Recurse
+
+Stop-Process -processname explorer
+
