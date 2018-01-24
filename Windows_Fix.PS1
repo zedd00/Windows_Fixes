@@ -112,6 +112,18 @@ Set-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanc
 # Disable Search the Internet for program to open filetype
 Set-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Explorer InternetOpenWith 1
 
+# Disable check for solution to unexpected closing of application
+New-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' Disabled -value 1
+Set-ItemProperty 'HKLM:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' Disabled 1
+New-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' Disabled -value 1
+Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' Disabled 1
+Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' AutoApproveOSDumps 0
+Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' DisableArchive 0
+Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' DontSendAdditionalData 1
+Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' DontShowUI 1
+Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' LoggingDisabled 1
+Set-Service WerSvc -StartupType disabled
+
 # Remove OneDrive from explorer
 Set-ItemProperty HKCR:\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 00000000 
 Set-ItemProperty HKCR:\Wow6432Node\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 0000000
