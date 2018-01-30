@@ -124,6 +124,9 @@ Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' Don
 Set-ItemProperty 'HKCU:\SOFTWARE\Microsoft\Windows\Windows Error Reporting\' LoggingDisabled 1
 Set-Service WerSvc -StartupType disabled
 
+# Set all folders to details view
+New-ItemProperty 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell\' FolderType -value 'Documents' -PropertyType 'String'
+
 # Remove OneDrive from explorer
 Set-ItemProperty HKCR:\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 00000000 
 Set-ItemProperty HKCR:\Wow6432Node\CLSID\'{018D5C66-4533-4307-9B53-224DE2ED1FE6}' System.IsPinnedToNameSpaceTree 0000000
