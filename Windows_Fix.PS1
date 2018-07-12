@@ -5,6 +5,9 @@
 # set-executionpolicy unrestricted 
 # c:\downloads\Windows_Fix.PS1
 
+# If the machine has a larger D drive, set this to yes before running
+$HasDdrive='no'
+
 # SetItem Function
 function SetItem  {
     Param
@@ -92,6 +95,8 @@ Get-AppxPackage -allusers Microsoft.Print3D| Remove-AppxPackage | Out-Null
 Get-AppxPackage -allusers Microsoft.Xbox.TCUI| Remove-AppxPackage | Out-Null
 Get-AppxPackage -allusers Microsoft.XboxGamingOverlay| Remove-AppxPackage | Out-Null
 
+#Allow secure connections
+[Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
 #Download required software
 Write-host ' Create download directory'
@@ -100,7 +105,7 @@ Write-host ' Download and run github'
 (New-Object System.Net.WebClient).DownloadFile('https://central.github.com/deployments/desktop/desktop/latest/win32', 'c:\downloads\github.exe')
 c:\downloads\github.exe
 Write-host ' Download and run ninite installer'
-(New-Object System.Net.WebClient).DownloadFile('https://ninite.com/7zip-chrome-classicstart-firefox-foxit-klitecodecs-notepadplusplus-paint.net-pidgin-putty-steam-teamviewer12-vlc-windirstat-winmerge-winscp/ninite.exe', 'c:\downloads\ninite.exe')
+(New-Object System.Net.WebClient).DownloadFile('https://ninite.com/7zip-chrome-classicstart-firefox-foxit-klitecodecs-notepadplusplus-paint.net-pidgin-putty-teamviewer12-vlc-windirstat-winmerge-winscp/ninite.exe', 'c:\downloads\ninite.exe')
 c:\downloads\ninite.exe
 Write-host ' Download and install Bulk Rename Utility'
 (New-Object System.Net.WebClient).DownloadFile('http://www.bulkrenameutility.co.uk/Downloads/BRU_setup.exe', 'c:\downloads\BRU_setup.exe')
@@ -111,9 +116,6 @@ c:\downloads\NordVPNSetup.exe
 Write-host ' Download and install Python 2.7'
 (New-Object System.Net.WebClient).DownloadFile('http://www.python.org/ftp/python/2.7.13/python-2.7.13.msi', 'c:\downloads\python-2.7.13.msi')
 c:\downloads\python-2.7.13.msi
-$oldpath = (Get-ItemProperty -Path ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name PATH).path
-$newpath = “$oldpath;c:\python27”
-Set-ItemProperty -Path ‘Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment’ -Name PATH -Value $newPath
 Write-host ' Download and install Spybot'
 (New-Object System.Net.WebClient).DownloadFile('https://download.spybot.info/AntiBeacon/Portable/SpybotAntiBeaconPortable-safer-networking.org_1.6_Dev_Test_4.paf.exe', 'c:\downloads\spybot.exe')
 c:\downloads\spybot.exe
@@ -128,9 +130,13 @@ c:\downloads\plexamp.exe
 Write-host ' Download and install display fusion'
 (New-Object System.Net.WebClient).DownloadFile('https://www.binaryfortress.com/Data/Download/?package=displayfusion&log=101', 'c:\downloads\df.exe')
 c:\downloads\df.exe
-
+Write-host ' Download and install display fusion'
+(New-Object System.Net.WebClient).DownloadFile('https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.6-I602.exe' 'c:\downloads\openvpn.exe')
+c:\downloads\openvpn.exe
 (New-Object System.Net.WebClient).DownloadFile('https://nssm.cc/release/nssm-2.24.zip', 'c:\downloads\nssm.zip')
 c:\downloads\nssm.zip
+
+Read-Host -Prompt "Once all of the software is installed, press Enter to continue"
 
 #Notepad++ Plugins
 Write-host ' Download and install notepad++ package manager'
@@ -157,6 +163,11 @@ $key = "HKCR:\Unknown\shell\notepad\"
 SetItem "(Default)" "Open with Notepad" string
 $key = "HKCR:\Unknown\shell\notepad\command\"
 SetItem "(Default)" 'C:\Program Files (x86)\Notepad++\notepad++.exe "%1"' expandstring
+
+Write-host ' Set Python Path'
+$oldpath = (Get-ItemProperty -Path '�Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+$newpath = '$oldpath;c:\python27'
+Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
 
 Write-host ' Show hidden files and extensions'
 $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
@@ -188,24 +199,6 @@ SetItem NoPopupsOnBoot 1
 Write-host ' Remove user folders from Computer'
 Remove-Item HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse -ErrorAction SilentlyContinue
 Remove-Item HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse -ErrorAction SilentlyContinue
-$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' 
-SetItem '{374DE290-123F-4565-9164-39C4925E467B}' 'D:\Library\Downloads' 'String'
-SetItem '{4C5C32FF-BB9D-43B0-B5B4-2D72E54EAAA4}' 'D:\Library\Saved Games' 'String'
-SetItem '{56784854-C6CB-462B-8169-88E350ACB882}' 'D:\Library\Contacts' 'String'
-SetItem Favorites 'D:\Library\Favorites' 'String'
-SetItem 'My Music' 'D:\Library\Music' 'String'
-SetItem 'My Pictures' 'D:\Library\Pictures' 'String'
-SetItem 'My Videos' 'D:\Library\Videos' 'String'
-SetItem Personal 'D:\Library\Documents' 'String'
-$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'  
-SetItem '{374DE290-123F-4565-9164-39C4925E467B}' 'D:\Library\Downloads' 'String'
-SetItem '{4C5C32FF-BB9D-43B0-B5B4-2D72E54EAAA4}' 'D:\Library\Saved Games' 'String'
-SetItem '{56784854-C6CB-462B-8169-88E350ACB882}' 'D:\Library\Contacts' 'String'
-SetItem Favorites 'D:\Library\Favorites' 'String'
-SetItem 'My Music' 'D:\Library\Music' 'String'
-SetItem 'My Pictures' 'D:\Library\Pictures' 'String'
-SetItem 'My Videos' 'D:\Library\Videos' 'String'
-SetItem Personal 'D:\Library\Documents' 'String'
 $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager'
 SetItem SystemPaneSuggestionsEnabled 0
 SetItem OemPreInstalledAppsEnabled 0
@@ -229,13 +222,33 @@ SetItem 'ThisPCPolicy' 'Hide' 'String'
 $key = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{31C0DD25-9439-4F12-BF41-7FF4EDA38722}\PropertyBag'
 SetItem 'ThisPCPolicy' 'Hide' 'String'
 
-
-Write-host ' Symlink Github and hyper-V'
-Remove-Item –path 'C:\Users\zedd\Documents\GitHub'
-Remove-Item –path 'C:\Users\Public\Documents\Hyper-V\Virtual hard disks'
-New-Item -ItemType SymbolicLink -Path 'C:\Users\zedd\Documents\GitHub' -Target 'D:\GitHub' | Out-Null
-New-Item -ItemType SymbolicLink -Path 'C:\Users\Public\Documents\Hyper-V\Virtual hard disks' -Target 'D:\Hyper-V' 
-
+If($HasDdrive -eq 'yes')
+	{
+	Write-host ' Move things to D drive'
+	Remove-Item -path 'C:\Users\zedd\Documents\GitHub'
+	Remove-Item -path 'C:\Users\Public\Documents\Hyper-V\Virtual hard disks'
+	New-Item -ItemType SymbolicLink -Path 'C:\Users\zedd\Documents\GitHub' -Target 'D:\GitHub' | Out-Null
+	New-Item -ItemType SymbolicLink -Path 'C:\Users\Public\Documents\Hyper-V\Virtual hard disks' -Target 'D:\Hyper-V' 
+	$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders' 
+	SetItem '{374DE290-123F-4565-9164-39C4925E467B}' 'D:\Library\Downloads' 'String'
+	SetItem '{4C5C32FF-BB9D-43B0-B5B4-2D72E54EAAA4}' 'D:\Library\Saved Games' 'String'
+	SetItem '{56784854-C6CB-462B-8169-88E350ACB882}' 'D:\Library\Contacts' 'String'
+	SetItem Favorites 'D:\Library\Favorites' 'String'
+	SetItem 'My Music' 'D:\Library\Music' 'String'
+	SetItem 'My Pictures' 'D:\Library\Pictures' 'String'
+	SetItem 'My Videos' 'D:\Library\Videos' 'String'
+	SetItem Personal 'D:\Library\Documents' 'String'
+	$key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders'  
+	SetItem '{374DE290-123F-4565-9164-39C4925E467B}' 'D:\Library\Downloads' 'String'
+	SetItem '{4C5C32FF-BB9D-43B0-B5B4-2D72E54EAAA4}' 'D:\Library\Saved Games' 'String'
+	SetItem '{56784854-C6CB-462B-8169-88E350ACB882}' 'D:\Library\Contacts' 'String'
+	SetItem Favorites 'D:\Library\Favorites' 'String'
+	SetItem 'My Music' 'D:\Library\Music' 'String'
+	SetItem 'My Pictures' 'D:\Library\Pictures' 'String'
+	SetItem 'My Videos' 'D:\Library\Videos' 'String'
+	SetItem Personal 'D:\Library\Documents' 'String'
+	}
+	
 Write-host ' Remove user folders from Explorer'
 Remove-Item HKCU:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Explorer\MyComputer\NameSpace\* -Recurse -ErrorAction SilentlyContinue
 
