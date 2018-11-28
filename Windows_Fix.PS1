@@ -131,7 +131,7 @@ Write-host ' Download and install display fusion'
 (New-Object System.Net.WebClient).DownloadFile('https://www.binaryfortress.com/Data/Download/?package=displayfusion&log=101', 'c:\downloads\df.exe')
 c:\downloads\df.exe
 Write-host ' Download and install display fusion'
-(New-Object System.Net.WebClient).DownloadFile('https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.6-I602.exe' 'c:\downloads\openvpn.exe')
+(New-Object System.Net.WebClient).DownloadFile('https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.6-I602.exe', 'c:\downloads\openvpn.exe')
 c:\downloads\openvpn.exe
 (New-Object System.Net.WebClient).DownloadFile('https://nssm.cc/release/nssm-2.24.zip', 'c:\downloads\nssm.zip')
 c:\downloads\nssm.zip
@@ -165,7 +165,7 @@ $key = "HKCR:\Unknown\shell\notepad\command\"
 SetItem "(Default)" 'C:\Program Files (x86)\Notepad++\notepad++.exe "%1"' expandstring
 
 Write-host ' Set Python Path'
-$oldpath = (Get-ItemProperty -Path '˜Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
+$oldpath = (Get-ItemProperty -Path 'Â˜Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
 $newpath = '$oldpath;c:\python27'
 Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
 
