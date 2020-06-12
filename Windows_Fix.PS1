@@ -44,57 +44,38 @@ function SetItem  {
 
 # Grab BlackViper's Service Settings 
 ## Disables unnecessary services, probably not needed most of the time
-#(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper-Win10.ps1', 'c:\downloads\BlackViper-Win10.ps1')
-#(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper.csv', 'c:\downloads\BlackViper.csv')
-#c:\downloads\BlackViper-Win10.ps1 -atos -auto -safe -min -bcsc -baf 
+New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper-Win10.ps1', 'c:\downloads\BlackViper-Win10.ps1')
+(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper.csv', 'c:\downloads\BlackViper.csv')
+c:\downloads\BlackViper-Win10.ps1 -atos -auto -safe -min -bcsc -baf 
 
 
 # Remove unused windows Apps
 ## To remove all Apps
 ### Get-AppxPackage -allusers | Remove-AppxPackage
-Get-AppxPackage -allusers Microsoft.WindowsDVDPlayer | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.WindowsPhone | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Appconnector | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.People| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers E046963F.LenovoCompanion | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.XboxIdentityProvider | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers 9E2F88E3.Twitter | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.MicrosoftOfficeHub | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Messaging| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.XboxSpeechToTextOverlay| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Wallet | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.XboxGameOverlay| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.ZuneMusic| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.OneConnect | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.VCLibs.140.00.UWPDesktop | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Microsoft3DViewer| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.WindowsMaps| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.WindowsFeedbackHub | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.XboxApp| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.SkypeApp | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.ZuneVideo| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.WindowsAlarms| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.BingSports | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.BingFinance| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.BingNews | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.BingWeather| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.WindowsSoundRecorder | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers king.com.CandyCrushSaga| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.WindowsCamera| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers microsoft.windowscommunicationsapps | Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers 89006A2E.AutodeskSketchBook| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers A278AB0D.DisneyMagicKingdoms| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers A278AB0D.MarchofEmpires| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers DolbyLaboratories.DolbyAccess| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers king.com.CandyCrushSodaSaga| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.BingNews| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Getstarted| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.MicrosoftStickyNotes| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Office.OneNote| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Print3D| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.Xbox.TCUI| Remove-AppxPackage | Out-Null
-Get-AppxPackage -allusers Microsoft.XboxGamingOverlay| Remove-AppxPackage | Out-Null
+Function Remove-AppxBloat {
+    [CmdletBinding()]
+    Param(
+        [ValidateSet('Whitelist','Blacklist')]
+        [string]$Method = 'Whitelist'
+    )
+    If ($Method -eq 'Whitelist') {
+        [regex]$Whitelist = "1527c705-839a-4832-9118-54d4Bd6a0c89|c5e2524a-ea46-4f67-841f-6a9465d9d515|F46D4000-FD22-4DB4-AC8E-4E1DDDE828FECortanaListenUIApp|DesktopLearning|DesktopView|E2A4F912-2574-4A75-9BB0-0D023378592B|EnvironmentsApp|FileManager|HoloCamera|HoloItemPlayerApp|HoloShell|InputApp|Microsoft.AAD.BrokerPlugin|Microsoft.AccountsControl||Microsoft.Appconnector|Microsoft.BioEnrollment|Microsoft.CredDialogHost|Microsoft.DesktopAppInstaller|Microsoft.ECApp|Microsoft.HEVCVideoExtension|Microsoft.LockApp|Microsoft.Media.PlayReadyClient|Microsoft.MicrosoftEdge|Microsoft.MoCamera|Microsoft.MSPaint|Microsoft.NET.Native.Framework|Microsoft.NET.Native.Runtime|Microsoft.PPIProjection|Microsoft.Services.Store.Engagement|Microsoft.Services.Store.Engagement|Microsoft.StorePurchaseApp|Microsoft.VCLibs|Microsoft.Windows.Apprep.ChxApp|Microsoft.Windows.AssignedAccessLockApp|Microsoft.Windows.CloudExperienceHost|Microsoft.Windows.ContentDeliveryManager|Microsoft.Windows.Cortana|Microsoft.Windows.ModalSharePickerHost|Microsoft.Windows.OOBENetworkCaptivePortal|Microsoft.Windows.OOBENetworkConnectionFlow|Microsoft.Windows.ParentalControls|Microsoft.Windows.PeopleExperienceHost|Microsoft.Windows.Photos|Microsoft.Windows.PinningConfirmationDialog|Microsoft.Windows.SecondaryTileExperience|Microsoft.Windows.SecureAssessmentBrowser|Microsoft.Windows.ShellExperienceHost|Microsoft.WindowsAlarms|Microsoft.WindowsCalculator|Microsoft.WindowsCamera|Microsoft.WindowsMaps|Microsoft.Windows.SecHealthUI|Microsoft.WindowsSoundRecorder|Microsoft.Windows.WindowPicker|Microsoft.WindowsStore|Microsoft.WinJS|Microsoft.XboxGameCallableUI|Microsoft.XboxGameOverlay|Microsoft.XboxIdentityProvider|Microsoft.XboxSpeechToTextOverlay|windows.devicesflow|windows.immersivecontrolpanel|Windows.MiracastView|Windows.PrintDialog|Windows.PurchaseDialog|winstore"
+        Write-Verbose 'Starting to remove provisioned packages'
+        Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -NotMatch $Whitelist} | Remove-AppxProvisionedPackage -Online | Out-Null
+        Write-Verbose 'Starting to remove packages from all users'
+        Get-AppxPackage -AllUsers | Where-Object {$_.Name -NotMatch $Whitelist} | Remove-AppxPackage | Out-Null
+        Write-Output 'Successfully completed removal of all AppX Packages not specified in the whitelist'
+    } Else {
+        [regex]$Blacklist = "9E2F88E3.Twitter|A278AB0D.MarchofEmpires|ClearChannelRadioDigital.iHeartRadio|Facebook.Facebook|Flipboard.Flipboard|king.com.CandyCrushSaga|king.com.CandyCrushSodaSaga|Microsoft.3DBuilder|Microsoft.BingFinance|Microsoft.BingFoodAndDrink|Microsoft.BingHealthAndFitness|Microsoft.BingNews|Microsoft.BingSports|Microsoft.BingTranslator|Microsoft.BingTravel|Microsoft.BingWeather|Microsoft.CommsPhone|Microsoft.FreshPaint|Microsoft.GetHelp|Microsoft.Getstarted|Microsoft.Microsoft3DViewer|Microsoft.MicrosoftJackpot|Microsoft.MicrosoftJigsaw|Microsoft.MicrosoftOfficeHub|Microsoft.MicrosoftSolitaireCollection|Microsoft.MicrosoftSudoku|Microsoft.MinecraftUWP|Microsoft.MovieMoments|Microsoft.Office.OneNote|Microsoft.Office.Sway|Microsoft.People|Microsoft.Print3D|Microsoft.SkypeApp|Microsoft.SkypeWiFi|Microsoft.Studios.Wordament|Microsoft.Taptiles|microsoft.windowscommunicationsapps|Microsoft.WindowsFeedback|Microsoft.WindowsFeedbackHub|Microsoft.WindowsPhone|Microsoft.Xbox.TCUI|Microsoft.XboxApp|Microsoft.ZuneMusic|Microsoft.ZuneVideo|MicrosoftMahjong|ShazamEntertainmentLtd.Shazam|TheNewYorkTimes.NYTCrossword"
+        Write-Verbose 'Starting to remove provisioned packages'
+        Get-AppxProvisionedPackage -Online | Where-Object {$_.PackageName -Match $Blacklist} | Remove-AppxProvisionedPackage -Online | Out-Null
+        Write-Verbose 'Starting to remove packages from all users'
+        Get-AppxPackage -AllUsers | Where-Object {$_.Name -Match $Blacklist} | Remove-AppxPackage | Out-Null
+        Write-Output 'Successfully completed removal of all AppX Packages specified in the blacklist'
+    }
+}
 
+Remove-AppxBloat Whitelist
 #Allow secure connections
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
@@ -104,6 +85,9 @@ New-Item c:\downloads -type directory -ErrorAction SilentlyContinue
 Write-host ' Download and run github'
 (New-Object System.Net.WebClient).DownloadFile('https://central.github.com/deployments/desktop/desktop/latest/win32', 'c:\downloads\github.exe')
 c:\downloads\github.exe
+Write-host ' Download and run github'
+(New-Object System.Net.WebClient).DownloadFile('https://packages.chef.io/files/stable/chef/15.0.300/windows/2016/chef-client-15.0.300-1-x64.msi', 'c:\downloads\chef.msi')
+
 Write-host ' Download and run ninite installer'
 (New-Object System.Net.WebClient).DownloadFile('https://ninite.com/7zip-chrome-classicstart-firefox-foxit-klitecodecs-notepadplusplus-paint.net-pidgin-putty-teamviewer12-vlc-windirstat-winmerge-winscp/ninite.exe', 'c:\downloads\ninite.exe')
 c:\downloads\ninite.exe
@@ -130,11 +114,14 @@ c:\downloads\plexamp.exe
 Write-host ' Download and install display fusion'
 (New-Object System.Net.WebClient).DownloadFile('https://www.binaryfortress.com/Data/Download/?package=displayfusion&log=101', 'c:\downloads\df.exe')
 c:\downloads\df.exe
-Write-host ' Download and install display fusion'
+Write-host ' Download and install OpenVPN'
 (New-Object System.Net.WebClient).DownloadFile('https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.6-I602.exe' 'c:\downloads\openvpn.exe')
 c:\downloads\openvpn.exe
+Write-host ' Download and install Not Sucky Service Manager'
 (New-Object System.Net.WebClient).DownloadFile('https://nssm.cc/release/nssm-2.24.zip', 'c:\downloads\nssm.zip')
 c:\downloads\nssm.zip
+Write-host ' Download and install mouse driver'
+(New-Object System.Net.WebClient).DownloadFile('http://dl2.elecom.co.jp/support/download/peripheral/mouse/assistant/win/mouse_driver_ma516000.zip', 'c:\downloads\mouse.zip')
 
 Read-Host -Prompt "Once all of the software is installed, press Enter to continue"
 
@@ -142,6 +129,8 @@ Read-Host -Prompt "Once all of the software is installed, press Enter to continu
 Write-host ' Download and install notepad++ package manager'
 (New-Object System.Net.WebClient).DownloadFile('https://github.com/bruderstein/nppPluginManager/releases/download/v1.4.11/PluginManager_v1.4.11_UNI.zip', 'c:\downloads\npp-package.zip')
 7z x c:\downloads\npp-package.zip 'C:\Program Files (x86)\Notepad++'
+7z x c:\downloads\mouse.zip 'c:\downloads'
+c:\downloads\mouse_driver_ma516000.exe
 
 #Explorer
 #markdown++
@@ -164,10 +153,6 @@ SetItem "(Default)" "Open with Notepad" string
 $key = "HKCR:\Unknown\shell\notepad\command\"
 SetItem "(Default)" 'C:\Program Files (x86)\Notepad++\notepad++.exe "%1"' expandstring
 
-Write-host ' Set Python Path'
-$oldpath = (Get-ItemProperty -Path '˜Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH).path
-$newpath = '$oldpath;c:\python27'
-Set-ItemProperty -Path 'Registry::HKEY_LOCAL_MACHINE\System\CurrentControlSet\Control\Session Manager\Environment' -Name PATH -Value $newPath
 
 Write-host ' Show hidden files and extensions'
 $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced'
