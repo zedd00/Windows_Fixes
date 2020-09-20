@@ -1,12 +1,20 @@
 # Does initial windows configuration
-# To kick this off run the next 4 lines uncommented at an Administrator Powershell Prompt
+# To kick this off run the next 2 lines uncommented at an Administrator Powershell Prompt
 # New-Item c:\downloads -type directory
-# wget "https://raw.githubusercontent.com/zedd00/Windows_Fixes/master/Windows_Fix.PS1" -outfile "c:\downloads\Windows_Fix.PS1"
-# set-executionpolicy unrestricted 
-# c:\downloads\Windows_Fix.PS1
+# Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/zedd00/Windows_Fixes/master/Windows_Fix.PS1'))
+
 
 # If the machine has a larger D drive, set this to yes before running
 $HasDdrive='no'
+# If this is for home, install different stuff
+$HomeMachine='no'
+
+
+# Grab BlackViper's Service Settings 
+## Disables unnecessary services, probably not needed most of the time
+# New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper-Win10.ps1', 'c:\downloads\BlackViper-Win10.ps1')
+# (New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper.csv', 'c:\downloads\BlackViper.csv')
+# c:\downloads\BlackViper-Win10.ps1 -atos -auto -safe -min -bcsc -baf 
 
 # SetItem Function
 function SetItem  {
@@ -42,13 +50,6 @@ function SetItem  {
 #QWord	REG_QWORD
 #String	REG_SZ	
 
-# Grab BlackViper's Service Settings 
-## Disables unnecessary services, probably not needed most of the time
-New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper-Win10.ps1', 'c:\downloads\BlackViper-Win10.ps1')
-(New-Object System.Net.WebClient).DownloadFile('https://raw.githubusercontent.com/madbomb122/BlackViperScript/master/BlackViper.csv', 'c:\downloads\BlackViper.csv')
-c:\downloads\BlackViper-Win10.ps1 -atos -auto -safe -min -bcsc -baf 
-
-
 # Remove unused windows Apps
 ## To remove all Apps
 ### Get-AppxPackage -allusers | Remove-AppxPackage
@@ -75,70 +76,76 @@ Function Remove-AppxBloat {
     }
 }
 
+# Remove Default Windows Apps
 Remove-AppxBloat Whitelist
+
 #Allow secure connections
 [Net.ServicePointManager]::SecurityProtocol = "tls12, tls11, tls"
 
-#Download required software
+
 Write-host ' Create download directory'
 New-Item c:\downloads -type directory -ErrorAction SilentlyContinue
-Write-host ' Download and run github'
-(New-Object System.Net.WebClient).DownloadFile('https://central.github.com/deployments/desktop/desktop/latest/win32', 'c:\downloads\github.exe')
-c:\downloads\github.exe
-Write-host ' Download and run github'
-(New-Object System.Net.WebClient).DownloadFile('https://packages.chef.io/files/stable/chef/15.0.300/windows/2016/chef-client-15.0.300-1-x64.msi', 'c:\downloads\chef.msi')
 
-Write-host ' Download and run ninite installer'
-(New-Object System.Net.WebClient).DownloadFile('https://ninite.com/7zip-chrome-classicstart-firefox-foxit-klitecodecs-notepadplusplus-paint.net-pidgin-putty-teamviewer12-vlc-windirstat-winmerge-winscp/ninite.exe', 'c:\downloads\ninite.exe')
-c:\downloads\ninite.exe
-Write-host ' Download and install Bulk Rename Utility'
-(New-Object System.Net.WebClient).DownloadFile('http://www.bulkrenameutility.co.uk/Downloads/BRU_setup.exe', 'c:\downloads\BRU_setup.exe')
-c:\downloads\BRU_setup.exe
-Write-host ' Download and install VPN Software'
-(New-Object System.Net.WebClient).DownloadFile('https://downloads.nordcdn.com/apps/windows/10/NordVPN/latest/NordVPNSetup.exe', 'c:\downloads\NordVPNSetup.exe')
-c:\downloads\NordVPNSetup.exe
-Write-host ' Download and install Python 2.7'
-(New-Object System.Net.WebClient).DownloadFile('http://www.python.org/ftp/python/2.7.13/python-2.7.13.msi', 'c:\downloads\python-2.7.13.msi')
-c:\downloads\python-2.7.13.msi
-Write-host ' Download and install Spybot'
-(New-Object System.Net.WebClient).DownloadFile('https://download.spybot.info/AntiBeacon/Portable/SpybotAntiBeaconPortable-safer-networking.org_1.6_Dev_Test_4.paf.exe', 'c:\downloads\spybot.exe')
-c:\downloads\spybot.exe
-#Write-host ' Download and install Cura'
-#start https://ultimaker.com/en/products/cura-software/list
-Write-host ' Download and install Slack'
-(New-Object System.Net.WebClient).DownloadFile('https://slack.com/ssb/download-win64', 'c:\downloads\slack.exe')
-c:\downloads\slack.exe
-Write-host ' Download and install plexamp'
-(New-Object System.Net.WebClient).DownloadFile('https://plexamp.plex.tv/plexamp.plex.tv/Plexamp%20Setup%201.0.5.exe', 'c:\downloads\plexamp.exe')
-c:\downloads\plexamp.exe
-Write-host ' Download and install display fusion'
-(New-Object System.Net.WebClient).DownloadFile('https://www.binaryfortress.com/Data/Download/?package=displayfusion&log=101', 'c:\downloads\df.exe')
-c:\downloads\df.exe
-Write-host ' Download and install OpenVPN'
-(New-Object System.Net.WebClient).DownloadFile('https://swupdate.openvpn.org/community/releases/openvpn-install-2.4.6-I602.exe' 'c:\downloads\openvpn.exe')
-c:\downloads\openvpn.exe
-Write-host ' Download and install Not Sucky Service Manager'
-(New-Object System.Net.WebClient).DownloadFile('https://nssm.cc/release/nssm-2.24.zip', 'c:\downloads\nssm.zip')
-c:\downloads\nssm.zip
-Write-host ' Download and install mouse driver'
-(New-Object System.Net.WebClient).DownloadFile('http://dl2.elecom.co.jp/support/download/peripheral/mouse/assistant/win/mouse_driver_ma516000.zip', 'c:\downloads\mouse.zip')
+# Chocolatey is a package manager for Windows
+Write-host ' Download and run Chocolatey'
+If(-not(Test-Path -Path "$env:ProgramData\Chocolatey")) 
+	{
+	(New-Object System.Net.WebClient).DownloadFile('https://chocolatey.org/install.ps1', 'c:\downloads\choco-install.ps1')
+	c:\downloads\choco-install.ps1
+	}
+# Download software for home
+If($HomeMachine -eq "yes")
+	{
+	Write-host 'Installing home software'
+	$Packages = 'github-desktop','nordvpn','slack','googlechrome','firefox','brave' 
 
-Read-Host -Prompt "Once all of the software is installed, press Enter to continue"
+		ForEach ($PackageName in $Packages)
+		{
+			choco upgrade $PackageName -y
+		}
 
-#Notepad++ Plugins
-Write-host ' Download and install notepad++ package manager'
-(New-Object System.Net.WebClient).DownloadFile('https://github.com/bruderstein/nppPluginManager/releases/download/v1.4.11/PluginManager_v1.4.11_UNI.zip', 'c:\downloads\npp-package.zip')
-7z x c:\downloads\npp-package.zip 'C:\Program Files (x86)\Notepad++'
-7z x c:\downloads\mouse.zip 'c:\downloads'
+	Write-host 'Download and install Spybot'
+	(New-Object System.Net.WebClient).DownloadFile('https://download.spybot.info/AntiBeacon/Portable/SpybotAntiBeaconPortable-safer-networking.org_1.6_Dev_Test_4.paf.exe', 'c:\downloads\spybot.exe')
+	c:\downloads\spybot.exe
+	}
+
+#Download software 
+
+# Add public choco repo
+If($HomeMachine -eq "no")
+	{ 
+	choco source add -n='public' -s='https://chocolatey.org/api/v2'
+	}
+$Packages = 'notepadplusplus','npppluginmanager','python2','python3','windirstat','lastpass','bulkrenameutility','7zip','displayfusion','mobaxterm'
+	ForEach ($PackageName in $Packages)
+	{
+		choco upgrade $PackageName -y
+	}
+
+Write-host 'Download and install mouse driver'
+(New-Object System.Net.WebClient).DownloadFile('http://dl.elecom.co.jp/support/download/peripheral/mouse/assistant/win/mouse_driver_ma516000.zip', 'c:\downloads\mouse.zip')
+7z e c:\downloads\mouse.zip -oC:\downloads -y
 c:\downloads\mouse_driver_ma516000.exe
 
-#Explorer
-#markdown++
-#bracketsCheck
-#reloadButton
-#nppftp
-#Add erb to coffeescript
+Write-host 'Copy Notepad++ Settings'
 
+$nppconfig= 'config.xml','contextMenu.xml','langs.xml','shortcuts.xml','stylers.xml','userDefineLang.xml'
+	ForEach ($ConfigName in $nppconfig)
+	{
+	$dlroot="https://raw.githubusercontent.com/zedd00/Windows_Fixes/master/$ConfigName"
+	$nppath="C:\Program Files\Notepad++\$ConfigName"
+		(New-Object System.Net.WebClient).DownloadFile($dlroot, $nppath)
+	}
+
+Write-host 'Add these Notepad++ Plugins'
+Write-host 'Explorer'
+Write-host 'markdown++'
+Write-host 'bracketsCheck'
+Write-host 'reloadButton'
+Write-host 'nppftp'
+Write-host 'Add erb to coffeescript'
+
+Read-Host -Prompt "Once all of the software is installed, press Enter to continue"
 
 Write-host ' Disable Hibernation'
 powercfg.exe /hibernate off
@@ -297,3 +304,4 @@ $key = 'HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced\People'
 SetItem PeopleBand 0
 
 Stop-Process -processname explorer
+
