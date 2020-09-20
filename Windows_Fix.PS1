@@ -1,7 +1,11 @@
 # Does initial windows configuration
-# To kick this off run the next 2 lines uncommented at an Administrator Powershell Prompt
-# New-Item c:\downloads -type directory
+# To kick this off run the next line uncommented at an Administrator Powershell Prompt
 # Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/zedd00/Windows_Fixes/master/Windows_Fix.PS1'))
+# If you need to make changes, run these 3 lines, make changes, then run the 4th line
+# New-Item c:\downloads -type directory
+# wget "https://raw.githubusercontent.com/zedd00/Windows_Fixes/master/Windows_Fix.PS1" -outfile "c:\downloads\Windows_Fix.PS1"
+# set-executionpolicy unrestricted 
+# c:\downloads\Windows_Fix.PS1
 
 
 # If the machine has a larger D drive, set this to yes before running
